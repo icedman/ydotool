@@ -31,7 +31,7 @@ const char *MouseMoveRelative::Name() {
 
 
 int MouseMoveRelative::Exec(int argc, const char **argv) {
-	int time_delay = 100;
+	int time_delay = 0;
 
 	std::vector<std::string> extra_args;
 
@@ -56,16 +56,16 @@ int MouseMoveRelative::Exec(int argc, const char **argv) {
 		po::notify(vm);
 
 
-		if (vm.count("help")) {
-			ShowHelp(argv[0]);
-			return -1;
-		}
+		// if (vm.count("help")) {
+		// 	ShowHelp(argv[0]);
+		// 	return -1;
+		// }
 
-		if (vm.count("delay")) {
-			time_delay = vm["delay"].as<int>();
-			std::cerr << "Delay was set to "
-				  << time_delay << " milliseconds.\n";
-		}
+		// if (vm.count("delay")) {
+		// 	time_delay = vm["delay"].as<int>();
+		// 	std::cerr << "Delay was set to "
+		// 		  << time_delay << " milliseconds.\n";
+		// }
 
 		if (extra_args.size() != 2) {
 			std::cerr << "Which coordinate do you want to move to?\n"
@@ -84,10 +84,6 @@ int MouseMoveRelative::Exec(int argc, const char **argv) {
 
 	auto x = (int32_t)strtol(extra_args[0].c_str(), nullptr, 10);
 	auto y = (int32_t)strtol(extra_args[1].c_str(), nullptr, 10);
-
-	// if (!strchr(argv[0], '_')) {
-	// 	uInputContext->RelativeMove({-INT32_MAX, -INT32_MAX});
-	// }
 
 	uInputContext->RelativeMove({x, y});
 

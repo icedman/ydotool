@@ -11,7 +11,16 @@
 */
 
 #include "ydotool.hpp"
+#include <iostream>
+#include <sstream>
+#include <vector>
+#include "boost/algorithm/string.hpp"
 
+#include "../Tools/MouseMoveRelative/MouseMoveRelative.hpp"
+#include "../Tools/MouseUp/MouseUp.hpp"
+#include "../Tools/MouseDown/MouseDown.hpp"
+
+using namespace std;
 using namespace ydotool;
 using namespace uInputPlus;
 
@@ -85,6 +94,8 @@ int socket_callback(uint16_t type, uint16_t code, int32_t val, void *userp) {
 
 const char default_library_path[] = "/usr/local/lib/ydotool:/usr/lib/ydotool:/usr/lib/x86_64-linux-gnu/ydotool:/usr/lib/i386-linux-gnu/ydotool";
 
+#if 0
+
 int main(int argc, const char **argv) {
 	const char *library_path = default_library_path;
 
@@ -136,3 +147,138 @@ int main(int argc, const char **argv) {
 	int rc = this_tool->Exec(argc-1, &argv[1]);
 
 }
+
+#endif
+
+#if 1
+int main(int argc, char **argv) {
+    string lineInput = " ";
+    string sbegin = "SWIPE_BEGIN";
+    string send = "SWIPE_END";
+    string supdate = "SWIPE_UPDATE";
+    string supdateA = "(";
+    string supdateB = ")";
+    string supdateS = "s";
+    string line = "";
+    vector<string> strings;
+
+    Tools::MouseDown md;
+    Tools::MouseUp mu;
+    Tools::MouseMoveRelative mm;
+
+    char dash[] = "--";
+    char one[] = "1";
+    vector<char *> _argv;
+    char **cmd_argv = &_argv[0];
+	
+	const char *library_path = default_library_path;
+	auto instance = std::make_shared<Instance>();
+    
+    instance->Init();
+    md.Init(instance);
+    mu.Init(instance);
+    mm.Init(instance);
+
+    int skip = 0;
+
+    bool swiping = false;
+    bool three = false;
+    while(lineInput.length()>0) {
+
+        cin >> lineInput;
+        // cout << lineInput << endl;
+
+        if (lineInput.length()==1) {
+            three = (lineInput[0]=='3');
+            continue;
+        }
+
+        if (boost::contains(lineInput, sbegin)) {
+            swiping = true;
+            // mousedown
+            _argv.clear();
+            _argv.push_back(dash);
+            _argv.push_back(one);
+            cmd_argv = &_argv[0];
+            md.Exec(2, (const char**)cmd_argv);
+            continue;
+        }
+
+        if (boost::contains(lineInput, send)) {
+            swiping = false;
+            // mouseup
+            _argv.clear();
+            _argv.push_back(dash);
+            _argv.push_back(one);
+            cmd_argv = &_argv[0];
+            mu.Exec(2, (const char**)cmd_argv);
+            continue;
+        }
+
+        if (!swiping) {
+            continue;
+        }
+
+        if (swiping && three) {
+            if (boost::contains(lineInput, supdate)) {
+                line = "";
+                continue;
+            }
+
+            if (boost::contains(lineInput, supdateA)) {
+                // movemouse_relative
+
+                // skip++;
+                // if (skip < 3) {
+                //     line = "";
+                //     continue;
+                // } else {
+                //     skip = 0;
+                // }
+
+                istringstream f(line);
+                string s;
+                while (getline(f, s, '/')) {
+                    // cout << s << endl;
+                    strings.push_back(s);
+                }
+
+                if (strings.size() == 2) {
+                    // float x = ::atof(strings[0].c_str());
+                    // float y = ::atof(strings[1].c_str());
+                    // cout << x << ", " << y << std::endl;
+
+                    _argv.clear();
+                    _argv.push_back(dash);
+                    _argv.push_back(dash);
+                    _argv.push_back((char*)strings[0].c_str());
+                    _argv.push_back((char*)strings[1].c_str());
+                    cmd_argv = &_argv[0];
+                    mm.Exec(4, (const char**)cmd_argv);
+                }
+
+                strings.clear();
+                continue;
+            }
+
+            if (boost::contains(lineInput, supdateB)) {
+                line = "";
+                continue;
+            }
+
+            if (boost::contains(lineInput, supdateS)) {
+                line = "";
+                continue;
+            }
+
+            line += lineInput + " ";
+        }
+
+        if (swiping && !three) {
+            line = "";
+        }
+    }
+    return 0;
+}
+
+# endif

@@ -30,11 +30,11 @@ static void ShowHelp(){
 }
 
 int MouseUp::Exec(int argc, const char **argv) {
-//	std::cout << "argc = " << argc << "\n";
-//
-//	for (int i=1; i<argc; i++) {
-//		std::cout << "argv[" << i << "] = " << argv[i] << "\n";
-//	}
+	// std::cout << "up argc = " << argc << "\n";
+
+	// for (int i=1; i<argc; i++) {
+	// 	std::cout << "argv[" << i << "] = " << argv[i] << "\n";
+	// }
 
 	int time_delay = 100;
 
@@ -100,7 +100,6 @@ int MouseUp::Exec(int argc, const char **argv) {
 			break;
 	}
 
-	// uInputContext->SendKey(keycode, 1);
 	uInputContext->SendKey(keycode, 0);
 
 	return argc;

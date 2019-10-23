@@ -30,13 +30,13 @@ static void ShowHelp(){
 }
 
 int MouseDown::Exec(int argc, const char **argv) {
-//	std::cout << "argc = " << argc << "\n";
-//
-//	for (int i=1; i<argc; i++) {
-//		std::cout << "argv[" << i << "] = " << argv[i] << "\n";
-//	}
+	// std::cout << "down argc = " << argc << "\n";
 
-	int time_delay = 100;
+	// for (int i=1; i<argc; i++) {
+	// 	std::cout << "argv[" << i << "] = " << argv[i] << "\n";
+	// }
+
+	int time_delay = 0;
 
 	std::vector<std::string> extra_args;
 
@@ -101,8 +101,7 @@ int MouseDown::Exec(int argc, const char **argv) {
 	}
 
 	uInputContext->SendKey(keycode, 1);
-	// uInputContext->SendKey(keycode, 0);
-
+	
 	return argc;
 }
 
