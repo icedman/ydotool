@@ -170,10 +170,17 @@ int main(int argc, char **argv) {
     char one[] = "1";
     vector<char *> _argv;
     char **cmd_argv = &_argv[0];
+
+    char sx[32];
+    char sy[32];
 	
 	const char *library_path = default_library_path;
 	auto instance = std::make_shared<Instance>();
     
+    float jx = 0;
+    float jy = 0;
+    int tick = 0;
+
     instance->Init();
     md.Init(instance);
     mu.Init(instance);
@@ -193,8 +200,31 @@ int main(int argc, char **argv) {
             continue;
         }
 
+        if (swiping) {
+            tick++;
+            if (tick > 32) {
+                _argv.clear();
+                _argv.push_back(dash);
+                _argv.push_back(dash);
+                sprintf(sx, "%f", jx);
+                sprintf(sy, "%f", jy);
+                _argv.push_back(sx);
+                _argv.push_back(sy);
+                cmd_argv = &_argv[0];
+                mm.Exec(4, (const char**)cmd_argv);
+
+                jx = 0;
+                jy = 0;
+                tick = 0;
+            }
+        }
+
         if (boost::contains(lineInput, sbegin)) {
             swiping = true;
+            jx = 0;
+            jy = 0;
+            tick = 0;
+
             // mousedown
             _argv.clear();
             _argv.push_back(dash);
@@ -206,6 +236,20 @@ int main(int argc, char **argv) {
 
         if (boost::contains(lineInput, send)) {
             swiping = false;
+
+            // move one more time
+            tick = 0;
+
+            _argv.clear();
+            _argv.push_back(dash);
+            _argv.push_back(dash);
+            sprintf(sx, "%f", jx);
+            sprintf(sy, "%f", jy);
+            _argv.push_back(sx);
+            _argv.push_back(sy);
+            cmd_argv = &_argv[0];
+            mm.Exec(4, (const char**)cmd_argv);
+
             // mouseup
             _argv.clear();
             _argv.push_back(dash);
@@ -244,17 +288,19 @@ int main(int argc, char **argv) {
                 }
 
                 if (strings.size() == 2) {
-                    // float x = ::atof(strings[0].c_str());
-                    // float y = ::atof(strings[1].c_str());
+                    float x = ::atof(strings[0].c_str());
+                    float y = ::atof(strings[1].c_str());
+                    jx += x;
+                    jy += y;
                     // cout << x << ", " << y << std::endl;
 
-                    _argv.clear();
-                    _argv.push_back(dash);
-                    _argv.push_back(dash);
-                    _argv.push_back((char*)strings[0].c_str());
-                    _argv.push_back((char*)strings[1].c_str());
-                    cmd_argv = &_argv[0];
-                    mm.Exec(4, (const char**)cmd_argv);
+                    // _argv.clear();
+                    // _argv.push_back(dash);
+                    // _argv.push_back(dash);
+                    // _argv.push_back((char*)strings[0].c_str());
+                    // _argv.push_back((char*)strings[1].c_str());
+                    // cmd_argv = &_argv[0];
+                    // mm.Exec(4, (const char**)cmd_argv);
                 }
 
                 strings.clear();
