@@ -200,9 +200,9 @@ int main(int argc, char **argv) {
             continue;
         }
 
-        if (swiping) {
+        if (swiping && three && boost::contains(lineInput, supdate)) {
             tick++;
-            if (tick > 32) {
+            if (tick > 4) {
                 _argv.clear();
                 _argv.push_back(dash);
                 _argv.push_back(dash);
@@ -211,7 +211,10 @@ int main(int argc, char **argv) {
                 _argv.push_back(sx);
                 _argv.push_back(sy);
                 cmd_argv = &_argv[0];
-                mm.Exec(4, (const char**)cmd_argv);
+
+                if (jx!=0 && jy!=0) {
+                    mm.Exec(4, (const char**)cmd_argv);
+                }
 
                 jx = 0;
                 jy = 0;
